@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ClusterMaps</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="clustermaps">Sumergete en el mundo de los CLUSTER MAPS</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
