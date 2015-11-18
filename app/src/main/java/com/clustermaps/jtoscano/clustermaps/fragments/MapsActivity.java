@@ -1,5 +1,6 @@
 package com.clustermaps.jtoscano.clustermaps.fragments;
 
+import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +17,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +92,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
+                mClusterManager=new ClusterManager<Sucursales>(this, mMap);
+                mClusterManager.setRenderer(new CustomRender<Sucursales>(this, mMap, mClusterManager));
                 setUpMap();
             }
         }
@@ -100,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
 
     }
 
@@ -109,7 +115,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mClusterManager = new ClusterManager<Sucursales>(this, mMap);
         mMap.setOnCameraChangeListener(mClusterManager);
 
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (Sucursales item : sucursales) {
 
             if ((item.getLatitud() != null) && (item.getLongitud() != null)) {
@@ -121,6 +126,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         }
+
+
     }
 
     @Override
@@ -133,10 +140,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.mMap = googleMap;
     }
 
-    private void setUpClusterer(){
+    class CustomRender<T extends ClusterItem> extends DefaultClusterRenderer<T>{
 
-        ClusterManager<MiItem> mClusterManager;
+        public CustomRender(Context context, GoogleMap map, ClusterManager<T> clusterManager){
+            super(context, map, clusterManager);
+        }
 
-
+        @Override
+        protected boolean shouldRenderAsCluster(Cluster<T> cluster) {
+            return cluster.getSize()>3;
+        }
     }
 }
